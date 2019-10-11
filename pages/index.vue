@@ -6,8 +6,10 @@
 import gql from 'graphql-tag'
 
 export default {
+  // prettier-ignore
   apollo: {
-    info: gql`query accountInfo {
+    info: gql`
+    query accountInfo {
       host
       time
     }`
