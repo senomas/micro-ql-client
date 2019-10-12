@@ -13,10 +13,15 @@
     "fix": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
+<<<<<<< HEAD
     "@nuxtjs/apollo": "^4.0.0-rc14",
     "@nuxtjs/axios": "^5.3.6",
     "graphql-tag": "^2.10.1",
     "jsonwebtoken": "^8.5.1",
+=======
+    "@nuxtjs/axios": "^5.3.6",
+    "@vue/cli-shared-utils": "^3.11.0",
+>>>>>>> 76f0dbb3d7a358f249813f56fb8c3fb670ac5afe
     "nuxt": "^2.0.0"
   },
   "devDependencies": {
@@ -28,6 +33,7 @@
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-nuxt": ">=0.4.2",
     "eslint-plugin-prettier": "^3.0.1",
-    "prettier": "^1.16.4"
+    "prettier": "^1.16.4",
+    "vue-cli-plugin-apollo": "^0.21.1"
   }
 }

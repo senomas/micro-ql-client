@@ -1,8 +1,16 @@
 import colors from 'vuetify/es5/util/colors';
 
 export default {
+<<<<<<< HEAD
   // mode: 'universal',
   mode: 'spa',
+=======
+  mode: 'universal',
+  proxy: [
+    'http://localhost:5000/graphql'
+  ],
+
+>>>>>>> 76f0dbb3d7a358f249813f56fb8c3fb670ac5afe
   /*
    ** Headers of the page
    */
@@ -126,6 +134,6 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) { }
   }
 };

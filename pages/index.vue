@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <div v-if="auth && auth.name">
     <div>{{ accountInfo }}</div>
   </div>
@@ -9,10 +10,14 @@
       <v-btn :disabled="!valid" @click="doLogin">Login</v-btn>
     </v-form>
   </div>
+=======
+  <div>{{ info }}</div>
+>>>>>>> 76f0dbb3d7a358f249813f56fb8c3fb670ac5afe
 </template>
 
 <script>
 import gql from 'graphql-tag'
+<<<<<<< HEAD
 import { mapState } from 'vuex'
 import { login } from '../lib'
 
@@ -65,6 +70,15 @@ export default {
         this.$apolloHelpers.onLogin(res.token)
       }
     }
+=======
+
+export default {
+  apollo: {
+    info: gql`query accountInfo {
+      host
+      time
+    }`
+>>>>>>> 76f0dbb3d7a358f249813f56fb8c3fb670ac5afe
   }
 }
 </script>
