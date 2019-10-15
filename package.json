@@ -13,16 +13,14 @@
     "fix": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-<<<<<<< HEAD
     "@nuxtjs/apollo": "^4.0.0-rc14",
     "@nuxtjs/axios": "^5.3.6",
+    "ag-grid-community": "^21.2.2",
+    "ag-grid-vue": "^21.2.2",
     "graphql-tag": "^2.10.1",
     "jsonwebtoken": "^8.5.1",
-=======
-    "@nuxtjs/axios": "^5.3.6",
-    "@vue/cli-shared-utils": "^3.11.0",
->>>>>>> 76f0dbb3d7a358f249813f56fb8c3fb670ac5afe
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.0.0",
+    "vue-property-decorator": "^8.2.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^1.0.1",

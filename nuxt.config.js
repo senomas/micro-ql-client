@@ -1,16 +1,8 @@
-import colors from 'vuetify/es5/util/colors';
+import colors from 'vuetify/es5/util/colors'
 
 export default {
-<<<<<<< HEAD
   // mode: 'universal',
   mode: 'spa',
-=======
-  mode: 'universal',
-  proxy: [
-    'http://localhost:5000/graphql'
-  ],
-
->>>>>>> 76f0dbb3d7a358f249813f56fb8c3fb670ac5afe
   /*
    ** Headers of the page
    */
@@ -59,51 +51,12 @@ export default {
   axios: {},
 
   apollo: {
-    tokenName: 'yourApolloTokenName', // optional, default: apollo-token
-    includeNodeModules: true, // optional, default: false (this includes graphql-tag for node_modules folder)
-    authenticationType: 'Bearer', // optional, default: 'Bearer'
-    // (Optional) Default 'apollo' definition
-    defaultOptions: {
-      // See 'apollo' definition
-      // For example: default query options
-      $query: {
-        loadingKey: 'loading',
-        fetchPolicy: 'cache-and-network'
-      }
-    },
-    // optional
-    // errorHandler: '~/plugins/apollo-error-handler.js',
-    // required
+    includeNodeModules: true,
     clientConfigs: {
       default: {
-        // required
         httpEndpoint: 'http://localhost:5000/graphql',
-        // optional
-        // See https://www.apollographql.com/docs/link/links/http.html#options
-        httpLinkOptions: {
-          credentials: 'same-origin'
-        },
-        getAuth: () => {
-          return 'Bearer TOKEN'
-        },
-        // You can use `wss` for secure connection (recommended in production)
-        // Use `null` to disable subscriptions
-        // wsEndpoint: 'ws://localhost:5000', // optional
-        // LocalStorage token
-        tokenName: 'apollo-token', // optional
-        // Enable Automatic Query persisting with Apollo Engine
-        persisting: false, // Optional
-        // Use websockets for everything (no HTTP)
-        // You need to pass a `wsEndpoint` for this to work
-        websocketsOnly: false // Optional
+        tokenName: 'apollo-token'
       }
-      // test: {
-      //   httpEndpoint: 'http://localhost:5000',
-      //   wsEndpoint: 'ws://localhost:5000',
-      //   tokenName: 'apollo-token'
-      // },
-      // // alternative: user path to config which returns exact same config options
-      // test2: '~/plugins/my-alternative-apollo-config.js'
     }
   },
   /*
@@ -134,6 +87,6 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) { }
+    extend(config, ctx) {}
   }
-};
+}
