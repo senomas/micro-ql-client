@@ -12,7 +12,7 @@ module.exports = {
     'nuxt/no-cjs-in-config': 'off',
     // custom rules
     quotes: ['warn', 'single', { avoidEscape: true }],
-    semi: ['warn', 'always'],
+    semi: ['error', 'always'],
     'no-console': ['warn', { allow: ['error'] }],
     'arrow-parens': ['error', 'always'],
     'space-before-function-paren': 'off',

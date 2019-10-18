@@ -24,7 +24,6 @@ export const ecdh = crypto.createECDH(config.curves);
 ecdh.generateKeys();
 
 export async function login(ctx, login, password) {
-  await ctx.$apolloHelpers.onLogout()
   const auth = {
     serverKey: Buffer.from(
       (await ctx.$apollo.query({
@@ -119,4 +118,28 @@ export async function logout(ctx) {
       logout
     }`
   })).data.logout;
+}
+
+export function handleGraphqlError(ctx, err) {
+  try {
+    if (err.networkError) {
+      const networkError = err.networkError;
+      if (networkError.result && networkError.result.errors) {
+        const nerr = networkError.result.errors[0];
+        if (nerr.extensions) {
+          ctx.setPopupError({
+            ...nerr,
+            code: nerr.extensions.code,
+            action: () => {
+              ctx.setMe(null);
+            }
+          });
+          return true;
+        }
+      }
+    }
+  } catch (err2) {
+    console.error('handleGraphqlError', { err: err2, originalErr: err });
+  }
+  return false;
 }

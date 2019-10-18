@@ -1,4 +1,4 @@
-import colors from 'vuetify/es5/util/colors'
+import colors from 'vuetify/es5/util/colors';
 
 export default {
   // mode: 'universal',
@@ -7,7 +7,6 @@ export default {
    ** Headers of the page
    */
   head: {
-    titleTemplate: '%s - ' + process.env.npm_package_name,
     title: process.env.npm_package_name || '',
     meta: [
       { charset: 'utf-8' },
@@ -27,11 +26,16 @@ export default {
   /*
    ** Global CSS
    */
-  css: [],
+  css: [
+    '~/node_modules/ag-grid-community/dist/styles/ag-grid.css',
+    '~/node_modules/ag-grid-community/dist/styles/ag-theme-balham.css'
+  ],
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: [
+    "@/plugins/base-component"
+  ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -51,12 +55,12 @@ export default {
   axios: {},
 
   apollo: {
-    includeNodeModules: true,
-    clientConfigs: {
-      default: {
-        httpEndpoint: 'http://localhost:5000/graphql',
-        tokenName: 'apollo-token'
+    defaultOptions: {
+      $query: {
+        fetchPolicy: 'cache-and-network'
       }
+    }, clientConfigs: {
+      default: '@/plugins/apollo-config.js'
     }
   },
   /*
@@ -87,6 +91,6 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) { }
   }
-}
+};
