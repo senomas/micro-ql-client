@@ -1,10 +1,6 @@
 <template>
   <v-app>
     <div v-if="token && me && me.name">
-      <div>
-        {{ me.name }} &nbsp;-&nbsp;
-        <v-btn @click="logout">Logout</v-btn>
-      </div>
       <nuxt />
     </div>
     <div v-else>
@@ -26,7 +22,6 @@
 <script>
 import gql from 'graphql-tag';
 import { mapMutations, mapState } from 'vuex';
-import { logout } from '../lib';
 
 import Login from '@/components/Login';
 
@@ -101,16 +96,6 @@ export default {
   },
   methods: {
     ...mapMutations(['setMe', 'setPopupError']),
-    async logout() {
-      console.log('TOKEN', this.token);
-      try {
-        const res = await logout(this);
-        console.log('LOGOUT', { res });
-      } catch (err) {
-        console.log('LOGOUT', { err });
-      }
-      this.setMe(null);
-    },
     closePopupError() {
       if (this.popupError && this.popupError.action) {
         this.popupError.action();

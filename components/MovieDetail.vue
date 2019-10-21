@@ -1,27 +1,39 @@
 <template>
   <div v-if="detail">
-    DETAIL MOVIE {{ id }}
-    <v-btn @click="back">Back</v-btn>
+    <v-form ref="form" v-model="valid" lazy-validation>
+      <v-container>
+        <v-text-field v-model="detail.id" :disabled="progress" label="id" readonly></v-text-field>
+        <v-text-field v-model="detail.title" :disabled="progress" label="title" required></v-text-field>
+        <v-text-field v-model="detail.year" :disabled="progress" label="year" required></v-text-field>
+        <v-row>
+          <v-spacer />
+          <h-btt
+            :disabled="!valid || progress"
+            :progress="progress && progressType === 'reset'"
+            @click="reset"
+          >Reset</h-btt>
+          <h-btt
+            :disabled="!valid || progress"
+            :progress="progress && progressType === 'save'"
+            @click="save"
+          >Save</h-btt>
+          <v-btn :disabled="progress" @click="back">Back</v-btn>
+        </v-row>
+      </v-container>
+    </v-form>
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag';
-import { mapMutations } from 'vuex';
+import detailMixin from '../mixins/detail';
 
 export default {
-  name: 'MovieDetail',
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
-  apollo: {
-    data: {
-      manual: true,
-      query: gql`
-        query getMovie($id: ID!) {
+  mixins: [
+    detailMixin({
+      module: 'movie',
+      detailQuery: gql`
+        query getRole($id: ID!) {
           me {
             time
             name
@@ -40,41 +52,18 @@ export default {
           }
         }
       `,
-      variables() {
-        return {
-          id: this.id
-        };
-      },
-      result(res) {
-        console.log('MOVIE-DETAIL-RESULT', { data: res.data });
-        if (res.data) {
-          if (res.data.me) {
-            this.setMe(res.data.me);
-          }
-          if (res.data.movie) {
-            this.detail = res.data.movie;
+      mutationQuery: gql`
+        mutation updateMovies($id: ID!, $title: String!, $year: Int!) {
+          updateMovies(
+            filter: { id: $id }
+            data: { title: $title, year: $year }
+          ) {
+            matched
+            modified
           }
         }
-      }
-    }
-  },
-  head() {
-    if (this.detail) {
-      return {
-        title: `Movie - ${this.detail.title}`
-      };
-    }
-  },
-  data() {
-    return {
-      detail: null
-    };
-  },
-  methods: {
-    ...mapMutations(['setMe']),
-    back() {
-      this.$router.go(-1);
-    }
-  }
+      `
+    })
+  ]
 };
 </script>

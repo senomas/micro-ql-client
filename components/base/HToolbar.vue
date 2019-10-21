@@ -1,0 +1,93 @@
+<template>
+  <div>
+    <v-app-bar dense dark>
+      <v-menu offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon size="30px">mdi-menu</v-icon>
+          </v-btn>
+        </template>
+        <v-list shaped dense>
+          <v-subheader>REPORTS</v-subheader>
+          <v-list-item-group>
+            <v-list-item @click="$router.push('/movie')">
+              <v-list-item-icon>
+                <v-icon>mdi-account</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Movies</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="$router.push('/role')">
+              <v-list-item-icon>
+                <v-icon>mdi-account</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Roles</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
+      <v-toolbar-title>
+        <v-breadcrumbs :items="pbreadcrumbs" divider=">" />
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-menu offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon size="30px">mdi-account-circle</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="logout">
+            <v-list-item-title>Logout</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-app-bar>
+    <v-sheet id="scrolling-techniques-4" class="overflow-y-auto" max-height="600">
+      <slot />
+    </v-sheet>
+  </div>
+</template>
+
+<script>
+import * as cloneDeep from 'clone-deep';
+
+export default {
+  props: {
+    me: {
+      type: Object,
+      required: true
+    },
+    breadcrumbs: {
+      type: Array,
+      required: true
+    }
+  },
+  head() {
+    return {
+      title: this.pbreadcrumbs.map((v) => v.text).join(' | ')
+    };
+  },
+  computed: {
+    pbreadcrumbs() {
+      const list = [];
+      for (const bc of this.breadcrumbs) {
+        list.push(...cloneDeep(bc.items));
+      }
+      delete list[list.length - 1].href;
+      delete list[list.length - 1].to;
+      list[list.length - 1].link = false;
+      console.log('BC', { list });
+      return list;
+    }
+  },
+  methods: {
+    logout() {
+      this.$emit('action', 'logout');
+    }
+  }
+};
+</script>

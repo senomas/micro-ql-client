@@ -32,7 +32,8 @@ export async function login(ctx, login, password) {
           auth(clientKey: "${ecdh.getPublicKey().toString('base64')}") {
             serverKey
           }
-        }`
+        }`,
+        fetchPolicy: 'network-only'
       })).data.auth.serverKey,
       'base64'
     )
@@ -63,7 +64,8 @@ export async function login(ctx, login, password) {
         auth(clientKey: "${ecdh.getPublicKey().toString('base64')}") {
           salt(xlogin: "${xlogin}")
         }
-      }`
+      }`,
+    fetchPolicy: 'network-only'
   })).data.auth.salt;
   const aesd = crypto.createDecipheriv('aes-256-ctr', auth.aesKey, auth.aesSalt);
   const salt = Buffer.from(
@@ -96,7 +98,8 @@ export async function login(ctx, login, password) {
           seq token
         }
       }
-    }`
+    }`,
+    fetchPolicy: 'network-only'
   })).data.auth.login;
   delete loginRes.__typename;
   const obj = jwt.decode(loginRes.token);
@@ -116,7 +119,8 @@ export async function logout(ctx) {
     query: gql`
     {
       logout
-    }`
+    }`,
+    fetchPolicy: 'network-only'
   })).data.logout;
 }
 

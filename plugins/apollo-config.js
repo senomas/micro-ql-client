@@ -6,7 +6,7 @@ export default function (context) {
       credentials: 'same-origin'
     },
     getAuth: () => {
-      const token = sessionStorage.getItem('token');
+      const token = process.server ? null : sessionStorage.getItem('token');
       if (token) {
         return `Bearer ${token}`;
       }

@@ -1,92 +1,82 @@
 <template>
   <div v-if="me && me.name">
-    <div v-if="$apollo.loading">Loading data...</div>
-    <div v-if="detail">
-      <RoleDetail :id="detail" @refreshList="refreshList" />
+    <h-toolbar :me="me" :breadcrumbs="breadcrumbs" @action="toolbarAction" />
+    <div v-if="$apollo.loading"></div>
+    <div v-else-if="$route.query.id">
+      <RoleDetail :id="$route.query.id" :breadcrumbs.sync="breadcrumbs" @update="updateRow" />
     </div>
-    <div v-show="!detail">
-      <h-table type="roles" :me="me" :column-defs="columnDefs" :query="query" ref="gridList" />
+    <div v-show="!$route.query.id">
+      <ag-grid-vue
+        class="ag-theme-balham"
+        style="height: 400px;"
+        row-model-type="infinite"
+        row-selection="single"
+        :column-defs="columnDefs"
+        :datasource="datasource"
+        :grid-options="gridOptions"
+        :max-blocks-in-cache="3"
+        @grid-ready="onGridReady"
+      />
+      <div>Total {{ total }}</div>
     </div>
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag';
-import { mapState } from 'vuex';
-
+import { AgGridVue } from 'ag-grid-vue';
+import baseMixin from '../mixins/base';
+import listMixin from '../mixins/list';
 import RoleDetail from '@/components/RoleDetail';
 
 export default {
-  name: 'PageRole',
-  components: { RoleDetail },
-  head() {
-    if (!this.detail) {
-      return {
-        title: 'Roles'
-      };
-    }
-  },
-  data: () => ({
-    accountInfo: null,
-    query: gql`
-      query roles($skip: Int, $limit: Int) {
-        me {
-          time
-          name
-          privileges
-          token {
-            seq
-            token
-          }
-        }
-        roles(skip: $skip, limit: $limit) {
-          total
-          items {
-            id
-            code
+  mixins: [
+    baseMixin({
+      module: 'role',
+      breadcrumbs: [
+        { id: 'pre', items: [{ text: 'Admin', to: { path: '/' } }] }
+      ]
+    }),
+    listMixin({
+      module: 'role',
+      query: gql`
+        query roles($skip: Int, $limit: Int) {
+          me {
+            time
             name
-            description
+            privileges
+            token {
+              seq
+              token
+            }
+          }
+          roles(skip: $skip, limit: $limit) {
+            total
+            items {
+              id
+              code
+              name
+              description
+            }
           }
         }
-      }
-    `,
-    columnDefs: [
-      {
-        field: 'id'
-      },
-      {
-        field: 'code'
-      },
-      {
-        field: 'name'
-      },
-      {
-        field: 'description'
-      }
-    ]
-  }),
-  computed: {
-    ...mapState(['me'])
-  },
-  mounted() {
-    console.log('MOUNTED', this.$route.query.id);
-    this.detail = this.$route.query.id;
-  },
-  watch: {
-    $route(value) {
-      this.detail = value.query.id;
-    }
-  },
-  asyncData({ query }) {
-    return {
-      detail: query.id
-    };
-  },
-  methods: {
-    refreshList() {
-      console.log('REFRESH-LIST');
-      this.$refs.gridList.refreshList();
-    }
-  }
+      `,
+      columnDefs: [
+        {
+          field: 'id'
+        },
+        {
+          field: 'code'
+        },
+        {
+          field: 'name'
+        },
+        {
+          field: 'description'
+        }
+      ]
+    })
+  ],
+  components: { AgGridVue, RoleDetail }
 };
 </script>
