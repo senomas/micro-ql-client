@@ -1,11 +1,8 @@
-import gql from 'graphql-tag';
 import { mapMutations, mapState } from 'vuex';
-import { handleGraphqlError, logout } from '../lib';
+import { logout } from '../lib';
 
-function mixin({ module, breadcrumbs }) {
-  const moduleUpperCase = module.toUpperCase();
+function mixin({ breadcrumbs }) {
   const data = {
-    apollo: {},
     data: () => ({
       breadcrumbs: breadcrumbs || []
     }),
@@ -24,34 +21,6 @@ function mixin({ module, breadcrumbs }) {
             console.log('LOGOUT', { err });
           }
           this.setMe(null);
-        }
-      }
-    }
-  };
-  data.apollo[`${module}`] = {
-    manual: true,
-    query: gql`{
-      me {
-        time
-        name
-        privileges
-        token {
-          seq
-          token
-        }
-      }
-    }`,
-    result(res) {
-      console.log(`${moduleUpperCase}-INIT-RESULT`, { res });
-      if (res.error) {
-        if (!handleGraphqlError(this, res.error)) {
-          this.setPopupError({
-            code: 'UnknownError'
-          });
-        }
-      } else if (res.data) {
-        if (res.data.me) {
-          this.setMe(res.data.me);
         }
       }
     }

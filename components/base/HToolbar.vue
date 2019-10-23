@@ -30,9 +30,10 @@
         </v-list>
       </v-menu>
       <v-toolbar-title>
-        <v-breadcrumbs :items="pbreadcrumbs" divider=">" />
+        <v-breadcrumbs :items="breadcrumbs" divider=">" />
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <slot />
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on">
@@ -46,15 +47,10 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <v-sheet id="scrolling-techniques-4" class="overflow-y-auto" max-height="600">
-      <slot />
-    </v-sheet>
   </div>
 </template>
 
 <script>
-import * as cloneDeep from 'clone-deep';
-
 export default {
   props: {
     me: {
@@ -68,21 +64,8 @@ export default {
   },
   head() {
     return {
-      title: this.pbreadcrumbs.map((v) => v.text).join(' | ')
+      title: this.breadcrumbs.map((v) => v.text).join(' | ')
     };
-  },
-  computed: {
-    pbreadcrumbs() {
-      const list = [];
-      for (const bc of this.breadcrumbs) {
-        list.push(...cloneDeep(bc.items));
-      }
-      delete list[list.length - 1].href;
-      delete list[list.length - 1].to;
-      list[list.length - 1].link = false;
-      console.log('BC', { list });
-      return list;
-    }
   },
   methods: {
     logout() {

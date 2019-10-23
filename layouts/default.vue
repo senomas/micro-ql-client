@@ -1,12 +1,6 @@
 <template>
   <v-app>
-    <div v-if="token && me && me.name">
-      <nuxt />
-    </div>
-    <div v-else>
-      <Login />
-    </div>
-    <v-dialog :value="!!popupError" max-width="290">
+    <v-dialog :value="!!popupError" persistent max-width="290">
       <v-card v-if="popupError">
         <v-card-title>{{ popupError.title || popupError.code || 'Error' }}</v-card-title>
         <v-card-text>{{ popupError.message || popupError.code || 'Unknown error' }}</v-card-text>
@@ -16,6 +10,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-content v-if="token && me && me.name" style="height: 100%">
+      <nuxt />
+    </v-content>
+    <div v-else>
+      <Login />
+    </div>
   </v-app>
 </template>
 
@@ -28,7 +28,7 @@ import Login from '@/components/Login';
 export default {
   components: { Login },
   computed: {
-    ...mapState(['me', 'token', 'popupError']),
+    ...mapState(['me', 'token', 'loading', 'popupError']),
     popupErrorVisible: {
       get: () => {
         return !!this.popupError;
@@ -44,8 +44,8 @@ export default {
     data: {
       manual: true,
       query: gql`
-        {
-          me {
+        query base {
+          me(ts: "${Date.now() / 5000}") {
             time
             name
             privileges
@@ -105,3 +105,9 @@ export default {
   }
 };
 </script>
+
+<style type="text/css">
+html {
+  overflow: auto;
+}
+</style>

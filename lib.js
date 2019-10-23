@@ -1,6 +1,5 @@
 import * as crypto from 'crypto';
 import gql from 'graphql-tag';
-// import dateFns from 'date-fns'
 import * as jwt from 'jsonwebtoken';
 
 export const config = {
@@ -21,14 +20,14 @@ export const config = {
 };
 
 export const ecdh = crypto.createECDH(config.curves);
-ecdh.generateKeys();
 
 export async function login(ctx, login, password) {
+  ecdh.generateKeys();
   const auth = {
     serverKey: Buffer.from(
       (await ctx.$apollo.query({
         query: gql`
-        {
+        query loginGetServerKey {
           auth(clientKey: "${ecdh.getPublicKey().toString('base64')}") {
             serverKey
           }
@@ -60,7 +59,7 @@ export async function login(ctx, login, password) {
   ]).toString('base64');
   const xsalt = (await ctx.$apollo.query({
     query: gql`
-      {
+      query loginGetSalt {
         auth(clientKey: "${ecdh.getPublicKey().toString('base64')}") {
           salt(xlogin: "${xlogin}")
         }
@@ -92,7 +91,7 @@ export async function login(ctx, login, password) {
 
   const loginRes = (await ctx.$apollo.query({
     query: gql`
-    {
+    query login {
       auth(clientKey: "${ecdh.getPublicKey().toString('base64')}") {
         login(xlogin: "${xlogin}", xhpassword: "${xhpassword}") {
           seq token
@@ -117,7 +116,7 @@ export async function login(ctx, login, password) {
 export async function logout(ctx) {
   return (await ctx.$apollo.query({
     query: gql`
-    {
+    query logout {
       logout
     }`,
     fetchPolicy: 'network-only'
