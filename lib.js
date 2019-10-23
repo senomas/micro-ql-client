@@ -140,6 +140,12 @@ export function handleGraphqlError(ctx, err) {
           return true;
         }
       }
+    } else if (err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors[0].extensions && err.graphQLErrors[0].extensions.code) {
+      ctx.setPopupError({
+        ...err.graphQLErrors[0].extensions,
+        errors: err.graphQLErrors
+      });
+      return true;
     }
   } catch (err2) {
     console.error('handleGraphqlError', { err: err2, originalErr: err });

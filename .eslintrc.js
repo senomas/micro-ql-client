@@ -13,7 +13,8 @@ module.exports = {
     // custom rules
     quotes: ['warn', 'single', { avoidEscape: true }],
     semi: ['error', 'always'],
-    'no-console': ['warn', { allow: ['error'] }],
+    'no-console': 'off',
+    // 'no-console': ['warn', { allow: ['error'] }],
     'arrow-parens': ['error', 'always'],
     'space-before-function-paren': 'off',
     indent: 'off',

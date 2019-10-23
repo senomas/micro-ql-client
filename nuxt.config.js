@@ -1,11 +1,15 @@
 import colors from 'vuetify/es5/util/colors';
+import shrinkRay from 'shrink-ray-current'
 
 export default {
   // mode: 'universal',
   mode: 'spa',
   server: {
     port: 3099,
-    host: '0.0.0.0',
+    host: '0.0.0.0'
+  },
+  render: {
+    compressor: shrinkRay()
   },
   /*
    ** Headers of the page
@@ -32,13 +36,13 @@ export default {
    */
   css: [
     '~/node_modules/ag-grid-community/dist/styles/ag-grid.css',
-    '~/node_modules/ag-grid-community/dist/styles/ag-theme-balham.css'
+    '~/node_modules/ag-grid-community/dist/styles/ag-theme-balham-dark.css'
   ],
   /*
    ** Plugins to load before mounting the App
    */
   plugins: [
-    "@/plugins/base-component"
+    '@/plugins/base-component'
   ],
   /*
    ** Nuxt.js dev-modules
@@ -63,7 +67,8 @@ export default {
       $query: {
         fetchPolicy: 'cache-and-network'
       }
-    }, clientConfigs: {
+    },
+    clientConfigs: {
       default: '@/plugins/apollo-config.js'
     }
   },
@@ -92,6 +97,12 @@ export default {
    ** Build configuration
    */
   build: {
+    optimization: {
+      splitChunks: {
+        name: true,
+        maxSize: 1000000
+      }
+    },
     /*
      ** You can extend webpack config here
      */

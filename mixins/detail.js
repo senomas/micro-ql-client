@@ -2,7 +2,7 @@ import { mapMutations } from 'vuex';
 
 function mixin() {
   const data = {
-    name: "Detail",
+    name: 'Detail',
     props: {
       type: {
         type: String,
@@ -34,38 +34,18 @@ function mixin() {
         this.$emit('reset');
       },
       save() {
-        // try {
-        //   this.progress = true;
-        //   this.progressType = 'save';
-        //   console.log('SAVE', { data: this.detail });
-        //   await this.$apollo.provider.clients.defaultClient.resetStore();
-        //   const res = await this.$apollo.mutate({
-        //     mutation: mutationUpdate,
-        //     variables: this.detail
-        //   });
-        //   console.log('RES', { res });
-        //   if (res.data[`update${modulePluralsCapitalize}`].matched === 1) {
-        //     this.$router.go(-1);
-        //     this.$emit('update', { update: [this.detail] });
-        //   } else {
-        //     this.setPopupError({
-        //       code: 'UpdateObjectNotFound'
-        //     });
-        //   }
-        // } catch (err) {
-        //   if (!handleGraphqlError(this, err)) {
-        //     console.log('saveError', { err });
-        //   }
-        // } finally {
-        //   this.progress = true;
-        // }
-        console.log("FIXME SAVE");
+        this.$emit('save', this.data);
       },
       create() {
-        console.log("FIXME CREATE");
+        this.$emit('create', this.data);
+      },
+      deleteEntry() {
+        this.$emit('delete', this.data);
       },
       back() {
-        this.$router.go(-1);
+        this.$router.replace({
+          path: this.$route.path
+        });
       }
     }
   };

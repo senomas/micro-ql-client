@@ -14,19 +14,19 @@ export const mutations = {
     if (me) {
       if (me.token && me.token.token) {
         const token = me.token.token;
-        const iat = JSON.parse(atob(token.split(".")[1])).iat;
+        const iat = JSON.parse(atob(token.split('.')[1])).iat;
         if (iat > state.tokenIssuedAt) {
-          console.log("SET-ME-TOKEN", { token, iat, oldIat: state.tokenIssuedAt });
+          console.log('SET-ME-TOKEN', { token, iat, oldIat: state.tokenIssuedAt });
           sessionStorage.setItem('token', me.token.token);
           state.tokenIssuedAt = iat;
           state.token = me.token.token;
         } else {
-          console.log("IGNORE-ME-TOKEN", { token, iat, oldIat: state.tokenIssuedAt });
+          console.log('IGNORE-ME-TOKEN', { token, iat, oldIat: state.tokenIssuedAt });
         }
       }
     } else {
       if (!process.server) {
-        console.log("REMOVE-ME-TOKEN");
+        console.log('REMOVE-ME-TOKEN');
         sessionStorage.removeItem('token');
       }
       state.token = null;
@@ -36,13 +36,13 @@ export const mutations = {
     state.popupError = popupError;
   },
   setToken(state, token) {
-    console.log("SET-TOKEN", { token });
+    console.log('SET-TOKEN', { token });
     state.token = token;
     if (token) {
-      state.tokenIssuedAt = JSON.parse(atob(token.split(".")[1]));
+      state.tokenIssuedAt = JSON.parse(atob(token.split('.')[1]));
       sessionStorage.setItem('token', token);
     } else {
-      console.log("REMOVE-TOKEN");
+      console.log('REMOVE-TOKEN');
       sessionStorage.removeItem('token');
       state.me = null;
     }

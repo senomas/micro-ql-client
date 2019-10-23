@@ -10,7 +10,7 @@
         <v-list shaped dense>
           <v-subheader>REPORTS</v-subheader>
           <v-list-item-group>
-            <v-list-item @click="$router.push('/movie')">
+            <v-list-item @click="$router.replace('/movie')">
               <v-list-item-icon>
                 <v-icon>mdi-account</v-icon>
               </v-list-item-icon>
@@ -18,7 +18,7 @@
                 <v-list-item-title>Movies</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item @click="$router.push('/role')">
+            <v-list-item @click="$router.replace('/role')">
               <v-list-item-icon>
                 <v-icon>mdi-account</v-icon>
               </v-list-item-icon>
@@ -32,7 +32,7 @@
       <v-toolbar-title>
         <v-breadcrumbs :items="breadcrumbs" divider=">" />
       </v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <slot />
       <v-menu offset-y>
         <template v-slot:activator="{ on }">

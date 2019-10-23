@@ -18,8 +18,11 @@
     "ag-grid-community": "^21.2.2",
     "ag-grid-vue": "^21.2.2",
     "graphql-tag": "^2.10.1",
+    "iltorb": "^2.4.3",
     "jsonwebtoken": "^8.5.1",
+    "node-zopfli-es": "^1.0.3",
     "nuxt": "^2.0.0",
+    "shrink-ray-current": "^4.1.2",
     "vue-element-loading": "^1.1.5",
     "vue-property-decorator": "^8.2.2"
   },

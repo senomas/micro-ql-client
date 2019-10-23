@@ -39,7 +39,7 @@ export default {
     passwordRules: [(v) => !!v || 'Password is required']
   }),
   methods: {
-    ...mapMutations(["setToken", "setPopupError"]),
+    ...mapMutations(['setToken', 'setPopupError']),
     async login() {
       if (this.$refs.loginForm.validate()) {
         try {

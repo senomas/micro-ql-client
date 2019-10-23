@@ -1,9 +1,9 @@
-import Vue from "vue";
-import upperFirst from "lodash/upperFirst";
-import camelCase from "lodash/camelCase";
+import Vue from 'vue';
+import upperFirst from 'lodash/upperFirst';
+import camelCase from 'lodash/camelCase';
 
 const requireComponent = require.context(
-  "../components/base",
+  '../components/base',
   false,
   /[A-Z]\w+\.(vue|js)$/
 );
@@ -13,9 +13,9 @@ requireComponent.keys().forEach((fileName) => {
   const componentName = upperFirst(
     camelCase(
       fileName
-        .split("/")
+        .split('/')
         .pop()
-        .replace(/\.\w+$/, "")
+        .replace(/\.\w+$/, '')
     )
   );
 

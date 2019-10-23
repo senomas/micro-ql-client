@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="valid" lazy-validation>
-    <v-container>
+    <v-container class="scroll-container">
       <v-row>
         <v-text-field
           v-if="!$route.query.new"
@@ -8,13 +8,13 @@
           :disabled="progress"
           label="id"
           readonly
-        ></v-text-field>
+        />
       </v-row>
       <v-row>
-        <v-text-field v-model="data.title" :disabled="progress" label="title" required></v-text-field>
+        <v-text-field v-model="data.title" :disabled="progress" label="title" required />
       </v-row>
       <v-row>
-        <v-text-field v-model="data.year" :disabled="progress" label="year" required></v-text-field>
+        <v-text-field v-model="data.year" :disabled="progress" label="year" required />
       </v-row>
       <v-row>
         <v-spacer />
@@ -42,24 +42,12 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
 import detailMixin from '../mixins/detail';
 
 export default {
   mixins: [
     detailMixin({
-      module: 'movie',
-      mutationQuery: gql`
-        mutation updateMovies($id: ID!, $title: String!, $year: Int!) {
-          updateMovies(
-            filter: { id: $id }
-            data: { title: $title, year: $year }
-          ) {
-            matched
-            modified
-          }
-        }
-      `
+      module: 'movie'
     })
   ]
 };

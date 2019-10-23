@@ -7,9 +7,9 @@
       <v-btn v-if="gridVisible" icon @click="createNew">
         <v-icon size="30px">mdi-plus</v-icon>
       </v-btn>
-      <v-divider v-if="gridVisible" vertical></v-divider>
+      <v-divider v-if="gridVisible" vertical />
     </h-toolbar>
-    <div v-if="$route.query.id || $route.query.new" style="height: calc(100% - 48px);">
+    <div style="height: calc(100vh - 48px); overflow: auto;">
       <vue-element-loading
         :active="overlayProgress"
         spinner="bar-fade-scale"
@@ -17,40 +17,47 @@
       >
         <v-progress-circular indeterminate color="primary" />
       </vue-element-loading>
-      <ViewDetail
-        v-if="detailVisible"
-        :data="detail"
-        :progress="detailProgress"
-        :progressType="detailProgressType"
-        @reset="resetDetail"
-        @update="updateRow"
-      />
-    </div>
-    <div v-show="gridVisible" style="height: calc(100% - 48px);">
-      <ag-grid-vue
-        class="ag-theme-balham"
-        style="height: 100%; width: 100%"
-        row-model-type="infinite"
-        row-selection="single"
-        :column-defs="columnDefs"
-        :default-col-def="defaultColDef"
-        :datasource="datasource"
-        :grid-options="gridOptions"
-        :max-blocks-in-cache="3"
-        @grid-ready="onGridReady"
-      />
+      <div v-if="detailVisible">
+        <ViewDetail
+          v-if="detail"
+          :data="detail"
+          :progress="detailProgress"
+          :progress-type="detailProgressType"
+          @reset="resetDetail"
+          @save="saveDetail"
+          @create="createDetail"
+          @delete="deleteDetail"
+        />
+      </div>
+      <div v-show="gridVisible" style="height: calc(100vh - 48px);">
+        <ag-grid-vue
+          class="ag-theme-balham-dark"
+          style="height: 100%; width: 100%"
+          row-model-type="infinite"
+          row-selection="single"
+          :column-defs="columnDefs"
+          :default-col-def="defaultColDef"
+          :datasource="datasource"
+          :grid-options="gridOptions"
+          :max-blocks-in-cache="3"
+          @grid-ready="onGridReady"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag';
-import { AgGridVue } from 'ag-grid-vue';
 import VueElementLoading from 'vue-element-loading';
 import baseMixin from '../mixins/base';
 import listMixin from '../mixins/list';
 
 export default {
+  components: {
+    AgGridVue: async () => (await import('ag-grid-vue')).AgGridVue,
+    VueElementLoading
+  },
   mixins: [
     baseMixin({
       module: 'role',
@@ -101,6 +108,46 @@ export default {
           }
         }
       `,
+      mutationUpdate: gql`
+        mutation updateRoles(
+          $id: ID!
+          $code: String
+          $name: String
+          $description: String
+        ) {
+          updateRoles(
+            filter: { id: $id }
+            data: { code: $code, name: $name, description: $description }
+          ) {
+            matched
+            modified
+          }
+        }
+      `,
+      mutationCreate: gql`
+        mutation createRole(
+          $code: String!
+          $name: String!
+          $description: String!
+        ) {
+          createRole(
+            data: { code: $code, name: $name, description: $description }
+          ) {
+            id
+          }
+        }
+      `,
+      mutationDelete: gql`
+        mutation deleteRole(
+          $id: ID!
+        ) {
+          deleteRoles(
+            filter: { id: $id }
+          ) {
+            deleted
+          }
+        }
+      `,
       columnDefs: [
         {
           field: 'id'
@@ -116,7 +163,6 @@ export default {
         }
       ]
     })
-  ],
-  components: { AgGridVue, VueElementLoading }
+  ]
 };
 </script>
