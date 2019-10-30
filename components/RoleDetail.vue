@@ -24,25 +24,25 @@
         <h-btt
           :disabled="!valid || progress"
           :progress="progress && progressType === 'reset'"
-          @click="reset"
+          @click="action('reset')"
         >Reset</h-btt>
         <h-btt
           v-if="!$route.query.new"
           :disabled="!valid || progress"
           :progress="progress && progressType === 'delete'"
-          @click="deleteEntry"
+          @click="action('delete')"
         >Delete</h-btt>
         <h-btt
           v-if="!$route.query.new"
           :disabled="!valid || progress"
           :progress="progress && progressType === 'save'"
-          @click="save"
+          @click="action('save')"
         >Save</h-btt>
         <h-btt
           v-else
           :disabled="!valid || progress"
           :progress="progress && progressType === 'create'"
-          @click="create"
+          @click="action('create')"
         >Create</h-btt>
         <v-btn :disabled="progress" @click="back">Back</v-btn>
       </v-row>

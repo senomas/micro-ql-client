@@ -1,41 +1,48 @@
 import { mapMutations, mapState } from 'vuex';
+import * as cloneDeep from 'clone-deep';
 import { handleGraphqlError } from '../lib';
+import { modules } from '../modules';
 
-function mixin({
-  module,
-  query, queryDetail, mutationUpdate, mutationCreate, mutationDelete,
-  columnDefs, defaultColDef,
-  moduleCapitalize, modulePlurals, modulePluralsCapitalize, titleKey
-}) {
-  if (!moduleCapitalize) {
-    moduleCapitalize = `${module.substr(0, 1).toUpperCase()}${module.substr(1)}`;
-  }
-  if (!modulePlurals) {
-    modulePlurals = `${module}s`;
-  }
-  if (!modulePluralsCapitalize) {
-    modulePluralsCapitalize = `${modulePlurals.substr(0, 1).toUpperCase()}${modulePlurals.substr(1)}`;
-  }
-  if (!defaultColDef) {
-    defaultColDef = {
-      sortable: true,
-      resizable: true,
-      maxWidth: 600
-    };
-  }
-  if (!titleKey) {
-    titleKey = 'title';
-  }
-  const moduleUpperCase = module.toUpperCase();
+function mixin() {
   const data = {
-    name: `${moduleCapitalize}List`,
-    components: {
-      ViewDetail: () => import(`@/components/${moduleCapitalize}Detail`)
+    asyncData({ params }) {
+      console.log('ASYNC-DATA', { module: params.list });
+      const module = params.list;
+      const v = modules[module];
+      if (!v.moduleCapitalize) {
+        v.moduleCapitalize = `${module.substr(0, 1).toUpperCase()}${module.substr(1)}`;
+      }
+      if (!v.modulePlurals) {
+        v.modulePlurals = `${module}s`;
+      }
+      if (!v.modulePluralsCapitalize) {
+        v.modulePluralsCapitalize = `${v.modulePlurals.substr(0, 1).toUpperCase()}${v.modulePlurals.substr(1)}`;
+      }
+      if (!v.defaultColDef) {
+        v.defaultColDef = {
+          sortable: true,
+          resizable: true,
+          maxWidth: 600
+        };
+      }
+      if (!v.titleKey) {
+        v.titleKey = 'title';
+      }
+      v.moduleUpperCase = module.toUpperCase();
+      console.log('columnDefs', { v });
+      const columnDefs = v.fields.map((v) => {
+        const nv = cloneDeep(v);
+        delete nv.detail;
+        return nv;
+      });
+      return {
+        ...v,
+        module,
+        columnDefs
+      };
     },
     data: () => ({
       loading: true,
-      defaultColDef,
-      columnDefs,
       accountInfo: null,
       gridOptions: {},
       gridApi: null,
@@ -50,6 +57,10 @@ function mixin({
     }),
     computed: {
       ...mapState(['me', 'token', 'popupError']),
+      detailViewComponent() {
+        // return () => import(`@/components/${this.moduleCapitalize}Detail`);
+        return () => import("@/components/GenericDetail");
+      },
       overlayProgress() {
         return !this.popupError && !this.detailProgress && this.loading;
       },
@@ -80,15 +91,6 @@ function mixin({
       this.gridOptions.getRowNodeId = (item) => {
         return item.id.toString();
       };
-      this.gridOptions.statusBar = {
-        statusPanels: [
-          { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
-          { statusPanel: 'agTotalRowCountComponent', align: 'center' },
-          { statusPanel: 'agFilteredRowCountComponent' },
-          { statusPanel: 'agSelectedRowCountComponent' },
-          { statusPanel: 'agAggregationComponent' }
-        ]
-      };
     },
     mounted() {
       console.log('MOUNTED', { query: this.$route.query });
@@ -97,13 +99,13 @@ function mixin({
     methods: {
       ...mapMutations(['setMe', 'loadingDone', 'setPopupError']),
       async initData(rq) {
-        this.breadcrumbs = this.breadcrumbs.filter((v) => v.mod !== module);
+        this.breadcrumbs = this.breadcrumbs.filter((v) => v.mod !== this.module);
         this.breadcrumbs.push({
-          text: moduleCapitalize,
-          mod: module,
+          text: this.moduleCapitalize,
+          mod: this.module,
           exact: true,
           to: {
-            name: module
+            name: this.module
           }
         });
         if (rq.new) {
@@ -114,7 +116,7 @@ function mixin({
           };
           this.breadcrumbs.push({
             text: 'New Entry',
-            mod: module,
+            mod: this.module,
             exact: true
           });
         } else if (rq.id) {
@@ -130,17 +132,17 @@ function mixin({
       },
       async getDetail(id) {
         this.loading = true;
-        console.log(`GRID-GET-${moduleUpperCase}-DETAIL`, { id });
+        console.log(`GRID-GET-${this.moduleUpperCase}-DETAIL`, { id });
         try {
           const res = (await this.$apollo.query({
-            query: queryDetail,
+            query: this.queryDetail,
             variables: {
               id
             }
           })).data;
-          console.log(`GRID-GET-${moduleUpperCase}-DETAIL-RESULT`, { res });
+          console.log(`GRID-GET-${this.moduleUpperCase}-DETAIL-RESULT`, { res });
           this.setMe(res.me);
-          this.detail = res[module];
+          this.detail = res[this.module];
           if (!this.detail) {
             this.detail = {};
             this.setPopupError({
@@ -153,11 +155,11 @@ function mixin({
             });
           }
           this.breadcrumbs.push({
-            text: this.detail[titleKey],
-            mod: module,
+            text: this.detail[this.titleKey || 'name'],
+            mod: this.module,
             exact: true,
             to: {
-              name: module,
+              name: this.module,
               query: {
                 id: this.detail.id
               }
@@ -165,7 +167,7 @@ function mixin({
           });
         } catch (err) {
           if (!handleGraphqlError(this, err)) {
-            console.log(`GRID-GET-${moduleUpperCase}-DETAIL-ERROR`, { err });
+            console.log(`GRID-GET-${this.moduleUpperCase}-DETAIL-ERROR`, { err });
             this.setPopupError({
               ...err,
               code: 'UnknownError',
@@ -181,7 +183,7 @@ function mixin({
         }
       },
       async getRows(param) {
-        console.log(`GRID-GET-${moduleUpperCase}-ROWS`, { param });
+        console.log(`GRID-GET-${this.moduleUpperCase}-ROWS`, { param });
         try {
           const variables = {
             skip: param.startRow,
@@ -198,16 +200,19 @@ function mixin({
             };
           }
           const res = (await this.$apollo.query({
-            query,
+            query: this.query,
             variables
           })).data;
-          console.log(`GRID-GET-${moduleUpperCase}-ROWS-RESULT`, { res });
+          console.log(`GRID-GET-${this.moduleUpperCase}-ROWS-RESULT`, { res });
           this.setMe(res.me);
-          this.total = res[modulePlurals].total;
-          param.successCallback(res[modulePlurals].items, res[modulePlurals].total);
+          this.total = res[this.modulePlurals].total;
+          param.successCallback(
+            res[this.modulePlurals].items,
+            res[this.modulePlurals].total
+          );
         } catch (err) {
           if (!handleGraphqlError(this, err)) {
-            console.log(`GRID-GET-${moduleUpperCase}-ROWS-ERROR`, { err });
+            console.log(`GRID-GET-${this.moduleUpperCase}-ROWS-ERROR`, { err });
           }
           param.failCallback();
         } finally {
@@ -233,16 +238,21 @@ function mixin({
           this.detailProgressType = 'save';
           await this.$apollo.provider.clients.defaultClient.resetStore();
           res = await this.$apollo.mutate({
-            mutation: mutationUpdate,
+            mutation: this.mutationUpdate,
             variables: data
           });
           const row = this.gridApi.getRowNode(data.id);
-          for (const col of this.columnDefs) {
-            if (col.field && col.field !== 'id') {
-              row.setDataValue(col.field, data[col.field]);
+          if (row) {
+            for (const col of this.columnDefs) {
+              if (col.field && col.field !== 'id') {
+                row.setDataValue(col.field, data[col.field]);
+              }
             }
+          } else {
+            console.log("REFRESH ALL", { data });
+            this.gridApi.setDatasource(this);
           }
-          if (res.data[`update${modulePluralsCapitalize}`].matched === 1) {
+          if (res.data[`update${this.modulePluralsCapitalize}`].matched === 1) {
             this.$router.replace({
               path: this.$route.path
             });
@@ -267,11 +277,11 @@ function mixin({
           this.detailProgressType = 'create';
           await this.$apollo.provider.clients.defaultClient.resetStore();
           res = await this.$apollo.mutate({
-            mutation: mutationCreate,
+            mutation: this.mutationCreate,
             variables: data
           });
           console.log("RES", res);
-          if (res.data[`create${moduleCapitalize}`].id) {
+          if (res.data[`create${this.moduleCapitalize}`].id) {
             this.gridApi.setDatasource(this);
             this.$router.replace({
               path: this.$route.path
@@ -297,11 +307,11 @@ function mixin({
           this.detailProgressType = 'delete';
           await this.$apollo.provider.clients.defaultClient.resetStore();
           res = await this.$apollo.mutate({
-            mutation: mutationDelete,
+            mutation: this.mutationDelete,
             variables: data
           });
           console.log("RES", res);
-          if (res.data[`delete${modulePluralsCapitalize}`].deleted > 0) {
+          if (res.data[`delete${this.modulePluralsCapitalize}`].deleted > 0) {
             this.gridApi.setDatasource(this);
             this.$router.replace({
               path: this.$route.path
@@ -328,13 +338,13 @@ function mixin({
             this.detail = {};
           } else if (this.$route.query.id) {
             await this.$apollo.provider.clients.defaultClient.resetStore();
-            this.breadcrumbs = this.breadcrumbs.filter((v) => v.mod !== module);
+            this.breadcrumbs = this.breadcrumbs.filter((v) => v.mod !== this.module);
             this.breadcrumbs.push({
-              text: moduleCapitalize,
-              mod: module,
+              text: this.moduleCapitalize,
+              mod: this.module,
               exact: true,
               to: {
-                name: module
+                name: this.module
               }
             });
             await this.getDetail(this.$route.query.id);

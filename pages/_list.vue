@@ -17,15 +17,18 @@
       >
         <v-progress-circular indeterminate color="primary" />
       </vue-element-loading>
-      <div v-if="detailVisible" style="height: 100%;">
-        <ViewDetail
+      <div v-if="detailVisible">
+        <component
           v-if="detail"
+          :is="detailViewComponent"
+          :fields="fields"
           :data="detail"
           :progress="detailProgress"
           :progress-type="detailProgressType"
           @reset="resetDetail"
           @save="saveDetail"
           @create="createDetail"
+          @delete="deleteDetail"
         />
       </div>
       <div v-show="gridVisible" style="height: calc(100vh - 48px);">
@@ -47,7 +50,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
 import VueElementLoading from 'vue-element-loading';
 import baseMixin from '../mixins/base';
 import listMixin from '../mixins/list';
@@ -57,87 +59,6 @@ export default {
     AgGridVue: async () => (await import('ag-grid-vue')).AgGridVue,
     VueElementLoading
   },
-  mixins: [
-    baseMixin({
-      module: 'movie',
-      breadcrumbs: [{ text: 'Admin', to: { path: '/' } }]
-    }),
-    listMixin({
-      module: 'movie',
-      query: gql`
-        query movies($skip: Int, $limit: Int, $orderBy: [OrderByMovieInput!]) {
-          me(ts: "${Date.now() / 1000}") {
-            time
-            name
-            privileges
-            token {
-              seq
-              token
-            }
-          }
-          movies(skip: $skip, limit: $limit, orderBy: $orderBy) {
-            total
-            items {
-              id
-              title
-              year
-              cast
-              genres
-            }
-          }
-        }
-      `,
-      queryDetail: gql`
-        query getMovie($id: ID!) {
-          me(ts: "${Date.now() / 1000}") {
-            time
-            name
-            privileges
-            token {
-              seq
-              token
-            }
-          }
-          movie(id: $id) {
-            id
-            title
-            year
-            cast
-            genres
-          }
-        }
-      `,
-      mutationUpdate: gql`
-        mutation updateMovies($id: ID!, $title: String!, $year: Int!) {
-          updateMovies(
-            filter: { id: $id }
-            data: { title: $title, year: $year }
-          ) {
-            matched
-            modified
-          }
-        }
-      `,
-      columnDefs: [
-        {
-          field: 'id'
-        },
-        {
-          field: 'title'
-        },
-        {
-          field: 'year',
-          suppressSizeToFit: true,
-          width: 100
-        },
-        {
-          field: 'cast'
-        },
-        {
-          field: 'genres'
-        }
-      ]
-    })
-  ]
+  mixins: [baseMixin(), listMixin()]
 };
 </script>

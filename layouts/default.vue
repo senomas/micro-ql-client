@@ -49,6 +49,9 @@ export default {
     this.checkAuth();
   },
   watch: {
+    $route(to) {
+      this.checkAuth();
+    },
     token(token) {
       if (token) {
         this.checkAuth();
@@ -58,6 +61,7 @@ export default {
   methods: {
     ...mapMutations(['setMe', 'setPopupError']),
     async checkAuth() {
+      console.log('CHECK-AUTH');
       try {
         const res = await this.$apollo.query({
           query: gql`
@@ -117,5 +121,8 @@ export default {
 <style type="text/css">
 html {
   overflow: hidden;
+}
+.detail-input-container {
+  width: 100%
 }
 </style>

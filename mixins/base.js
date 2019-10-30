@@ -1,10 +1,11 @@
 import { mapMutations, mapState } from 'vuex';
 import { logout } from '../lib';
+import { modules } from '~/modules';
 
-function mixin({ breadcrumbs }) {
+function mixin() {
   const data = {
     data: () => ({
-      breadcrumbs: breadcrumbs || []
+      breadcrumbs: modules.breadcrumbs
     }),
     computed: {
       ...mapState(['me'])

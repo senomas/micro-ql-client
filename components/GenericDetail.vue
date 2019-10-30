@@ -1,20 +1,23 @@
 <template>
   <v-form ref="form" v-model="valid" lazy-validation>
-    <v-container class="scroll-container">
+    <v-container>
       <v-row>
-        <v-text-field
-          v-if="!$route.query.new"
-          v-model="data.id"
-          :disabled="progress"
-          label="id"
-          readonly
-        />
-      </v-row>
-      <v-row>
-        <v-text-field v-model="data.title" :disabled="progress" label="title" required />
-      </v-row>
-      <v-row>
-        <v-text-field v-model="data.year" :disabled="progress" label="year" required />
+        <div :class="inputContainerClass">
+          <template v-for="input of inputComponents">
+            <component
+              v-if="!$route.query.new || input.field !== 'id'"
+              :key="input.field"
+              :is="input.component"
+              :label="input.field"
+              :disabled="progress"
+              :required="input.required"
+              :columnDef="fields[input.field]"
+              :readonly="input.readonly || input.field == 'id'"
+              :class-value="input.classValue"
+              v-model="data[input.field]"
+            />
+          </template>
+        </div>
       </v-row>
       <v-row>
         <v-spacer />
@@ -23,6 +26,12 @@
           :progress="progress && progressType === 'reset'"
           @click="action('reset')"
         >Reset</h-btt>
+        <h-btt
+          v-if="!$route.query.new"
+          :disabled="!valid || progress"
+          :progress="progress && progressType === 'delete'"
+          @click="action('delete')"
+        >Delete</h-btt>
         <h-btt
           v-if="!$route.query.new"
           :disabled="!valid || progress"
@@ -45,10 +54,6 @@
 import detailMixin from '../mixins/detail';
 
 export default {
-  mixins: [
-    detailMixin({
-      module: 'movie'
-    })
-  ]
+  mixins: [detailMixin()]
 };
 </script>

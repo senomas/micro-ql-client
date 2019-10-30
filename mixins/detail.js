@@ -9,6 +9,10 @@ function mixin() {
         required: false,
         default: 'edit'
       },
+      fields: {
+        type: Array,
+        required: true
+      },
       data: {
         type: Object,
         required: true
@@ -21,6 +25,11 @@ function mixin() {
         type: String,
         required: false,
         default: null
+      },
+      inputContainerClass: {
+        type: String,
+        required: false,
+        default: "detail-input-container"
       }
     },
     data() {
@@ -28,19 +37,26 @@ function mixin() {
         valid: true
       };
     },
+    computed: {
+      inputComponents() {
+        return this.fields.map((v) => {
+          let component;
+          if (v.detail && v.detail.input) {
+            component = v.detail.input;
+          } else {
+            component = 'DetailInputText';
+          }
+          return {
+            ...v,
+            component
+          };
+        });
+      }
+    },
     methods: {
       ...mapMutations(['setMe', 'setPopupError']),
-      reset() {
-        this.$emit('reset');
-      },
-      save() {
-        this.$emit('save', this.data);
-      },
-      create() {
-        this.$emit('create', this.data);
-      },
-      deleteEntry() {
-        this.$emit('delete', this.data);
+      action(event) {
+        this.$emit(event, this.data);
       },
       back() {
         this.$router.replace({
