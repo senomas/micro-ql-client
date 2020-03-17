@@ -15,8 +15,8 @@
   "dependencies": {
     "@nuxtjs/apollo": "^4.0.0-rc14",
     "@nuxtjs/axios": "^5.3.6",
-    "ag-grid-community": "^21.2.2",
-    "ag-grid-vue": "^21.2.2",
+    "ag-grid-community": "22.1.1",
+    "ag-grid-vue": "22.1.1",
     "clone-deep": "^4.0.1",
     "graphql-tag": "^2.10.1",
     "iltorb": "^2.4.3",
@@ -28,12 +28,12 @@
     "vue-property-decorator": "^8.2.2"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config": "^1.0.1",
+    "@nuxtjs/eslint-config": "2.0.2",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/vuetify": "^1.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
-    "eslint-config-prettier": "^4.1.0",
+    "eslint-config-prettier": "6.10.0",
     "eslint-plugin-nuxt": ">=0.4.2",
     "eslint-plugin-prettier": "^3.0.1",
     "prettier": "^1.16.4",
